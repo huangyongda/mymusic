@@ -88,7 +88,18 @@ class IndexController extends Controller
         $upload->savePath  =      ''; // 设置附件上传（子）目录
         $upload->autoSub = true;
         $upload->subName = array('date','Ymd');
-// 上传文件
+
+        $map = [
+            'name' => $_POST['name'] ?? '',
+            'singer' => $_POST['singer'] ?? '',
+            'album' => $_POST['album'] ?? '',
+            'duration' => $_POST['interval'] ?? '',
+        ];
+        if (M('music')->where($map)->find()) {
+            echo "已存在相同资源信息";
+            return;
+        }
+        // 上传文件
         $info   =   $upload->upload();
         if(!$info) {// 上传错误提示错误信息
             $this->error($upload->getError());
@@ -100,16 +111,7 @@ class IndexController extends Controller
             foreach($info as $file){
 
                 $savePath = $path."/".$file['savepath'].$file['savename'];
-                $map = [
-                    'name' => $_POST['name'] ?? '',
-                    'singer' => $_POST['singer'] ?? '',
-                    'album' => $_POST['album'] ?? '',
-                    'duration' => $_POST['interval'] ?? '',
-                ];
-                if (M('music')->where($map)->find()) {
-                    echo "已存在相同资源信息";
-                    return;
-                }
+
                 $music_id = M('music')->add([
                     'file' => $savePath,
                     'name' => $_POST['name'] ?? '',
