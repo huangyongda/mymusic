@@ -43,7 +43,7 @@ class IndexController extends Controller
 //                $base64_content = base64_encode($file_content);
                 $data[$key] = [
                     'url' => $file ? $file : "",
-                    'name' => $map['name'] . " "."-"." " . $map['singer'] . ".mp3",
+                    'name' => $this->sanitizeFilename($map['name'] . " "."-"." " . $map['singer']) . ".mp3",
 //                    'base64_content' => $base64_content,
                 ];
             }
@@ -55,6 +55,17 @@ class IndexController extends Controller
 //        $this->show('HI','utf-8');
         $this->ajaxReturn($data);
     }
+
+    function sanitizeFilename($filename) {
+        // 定义不允许出现在文件名中的字符和字符组合
+        $disallowedChars = array('/', '\\', ':', '*', '?', '"', '<', '>', '|');
+
+        // 将不允许的字符替换为空字符串
+        $sanitizedFilename = str_replace($disallowedChars, '', $filename);
+
+        return $sanitizedFilename;
+    }
+
 
     public function getmp3base64()
     {
